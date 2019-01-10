@@ -6,6 +6,7 @@ source $DIR/.common.bash
 
 echo "Adding WordPress debug configuration..."
 $DIR/wp -c ${WP_CONTAINER} config set WP_DEBUG true \
+&& $DIR/wp -c ${WP_CONTAINER} config set SCRIPT_DEBUG true \
 && $DIR/wp -c ${WP_CONTAINER} config set WP_DEBUG_LOG true \
 && $DIR/wp -c ${WP_CONTAINER} config set WP_DEBUG_DISPLAY false \
 && $DIR/wp -c ${WP_CONTAINER} config set SAVEQUERIES true \
