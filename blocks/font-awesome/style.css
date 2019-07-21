@@ -9,4 +9,12 @@
     display: flex;
 }
 
+.editor-styles-wrapper i.fa,
+.editor-styles-wrapper i.fas,
+.editor-styles-wrapper i.far,
+.editor-styles-wrapper i.fal,
+.editor-styles-wrapper i.fad {
+    font-style: unset;
+}
+
 
