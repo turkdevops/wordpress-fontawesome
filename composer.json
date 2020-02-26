@@ -53,7 +53,7 @@
         "phpcs": "phpcs --standard=phpcs.xml.dist",
         "phpcbf": "phpcbf --standard=phpcs.xml.dist",
         "clean": "rm -fR wp-dist; rm -fR admin/build; rm -fR vendor; rm -f font-awesome.zip",
-        "build.admin": "cd admin; yarn; yarn build",
+        "build.admin": "cd font-awesome/admin; yarn; yarn build",
         "cleandocs": "rm -fR $TMPDIR/phpdoc-twig-cache && rm -fR phpdoc-data && rm -fR docs",
         "docs": "vendor/bin/phpdoc",
         "docsrv": "cd docsrv && yarn && node index.js",
