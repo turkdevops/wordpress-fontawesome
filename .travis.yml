@@ -63,6 +63,7 @@ script:
 - composer install
 - |
   if [[ ! -z "$WP_VERSION" ]] ; then
+    cd font-awesome
     phpunit
     WP_MULTISITE=1 phpunit
   fi
