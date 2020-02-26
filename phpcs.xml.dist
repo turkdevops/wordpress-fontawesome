@@ -14,15 +14,15 @@
 	</rule>
 
 	<arg name="extensions" value="php"/>
-	<file>includes</file>
-	<file>tests</file>
-	<file>font-awesome.php</file>
-	<file>font-awesome-init.php</file>
-	<file>index.php</file>
-	<file>v3shims.php</file>
-	<file>defines.php</file>
-	<file>admin/index.php</file>
-	<file>admin/views/main.php</file>
+	<file>font-awesome/includes</file>
+	<file>font-awesome/tests</file>
+	<file>font-awesome/font-awesome.php</file>
+	<file>font-awesome/font-awesome-init.php</file>
+	<file>font-awesome/index.php</file>
+	<file>font-awesome/v3shims.php</file>
+	<file>font-awesome/defines.php</file>
+	<file>font-awesome/admin/index.php</file>
+	<file>font-awesome/admin/views/main.php</file>
 
 	<!-- Show progress and sniff codes in all reports -->
 	<arg value="ps"/>
