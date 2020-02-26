@@ -297,7 +297,7 @@ so you can pass any normal `phpunit` command line arguments you might like.
 To run the loader tests, use this alternate test config:
 
 ```bash
-$ bin/phpunit -c phpunit-loader.xml.dist
+$ bin/phpunit --configuration phpunit-loader.xml.dist
 ```
 
 # Use WP-CLI within your Docker environment
