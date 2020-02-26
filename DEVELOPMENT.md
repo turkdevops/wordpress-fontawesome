@@ -201,7 +201,19 @@ In one terminal window, `cd admin`, and then:
 
   (a) `yarn`
 
-  (b) `yarn start` to fire up webpack development server, if you want to run in development mode with
+  (b) OPTIONAL: `move node_modules ../../`
+
+      This is a way keep the `node_modules` from being included in the bind mount
+      between the host and container, which helps keep the Docker container performance
+      much snappier by avoiding unnecessary synchronization of many files.
+
+      Node knows how to automatically traverse up the directory hierarchy looking for
+      a `node_modules`.
+
+      CAVEAT: If you add any modules or update, the local `admin/node_modules` will
+      be re-build, and you'll need to do the `move node_modules ../../` again.
+
+  (c) `yarn start` to fire up webpack development server, if you want to run in development mode with
       hot module reloading and such.
       This will start up another web server that serves up the assets for the React app separately from
       the WordPress site, so leave it running while you develop.
