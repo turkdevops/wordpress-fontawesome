@@ -55,4 +55,4 @@ function font_awesome_block_init() {
 		'style'         => 'font-awesome-block',
 	) );
 }
-add_action( 'init', 'font_awesome_block_init' );
+add_action( 'wp_loaded', 'font_awesome_block_init' );
