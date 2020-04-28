@@ -386,6 +386,17 @@ class FontAwesome {
 				 */
 			}
 
+			// TODO: replace this experimental enqueue with something real.
+
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+			wp_enqueue_script(
+				'font-awesome-fa-icon-component',
+				trailingslashit( FONTAWESOME_DIR_URL ) . 'blocks/component.build.js',
+				[],
+				null,
+				true
+			);
+
 			$this->maybe_enqueue_admin_js_bundle();
 
 			// Setup JavaScript internationalization if we're on WordPress 5.0+.

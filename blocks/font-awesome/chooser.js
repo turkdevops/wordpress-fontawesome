@@ -53,7 +53,7 @@ export default class FontAwesomeIconChooser extends Component {
           {
             Object.keys(icons).map((icon, iconIndex) =>
               icons[icon].styles.map((prefix, prefixIndex) =>
-                <li onClick={() => handleSelect({ prefix, icon, unicode: icons[icon].unicode })} key={ `${ iconIndex }-${ prefixIndex }`}>
+                <li onClick={() => handleSelect(icons[icon].iconDefinition)} key={ `${ iconIndex }-${ prefixIndex }`}>
                   <i className={`${ prefix } fa-${ icon } `}></i>
                 </li>
               )

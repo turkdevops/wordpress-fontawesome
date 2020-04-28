@@ -13,8 +13,8 @@ import FontAwesomeIconChooser from './chooser'
   } = wp.components
 
 	const __ = wp.i18n.__
-  const { insert, registerFormatType, removeFormat, replace } = window.wp.richText
-  const { RichTextToolbarButton } = window.wp.editor
+  const { insertObject, registerFormatType } = window.wp.richText
+  const { RichTextToolbarButton } = window.wp.blockEditor
 
   const name = 'font-awesome/icon'
   const title = __('Font Awesome Icon')
@@ -23,16 +23,15 @@ import FontAwesomeIconChooser from './chooser'
     name,
     title: __( 'Font Awesome Icon' ),
     keywords: [ __( 'icon' ), __( 'font awesome' ) ],
-    tagName: 'i',
-    className: 'font-awesome-format-type',
+    tagName: 'fa-icon',
+    className: null,
+    // if object is true, then the HTML rendered for this type will lack a closing tag.
+    object: false,
     attributes: {
-      icon: 'data-icon',
-      prefix: 'data-prefix',
-      class: 'class',
-      unicode: 'data-unicode'
+      json: 'json'
     },
     edit: class FontAwesomeIconEdit extends Component {
-      constructor() {
+      constructor(props) {
         super( ...arguments )
 
         this.addIcon = this.addIcon.bind(this)
@@ -50,10 +49,12 @@ import FontAwesomeIconChooser from './chooser'
 
         if(this.state.addingIcon){
           this.stopAddingIcon()
+          /*
         } else if(isActive) {
           // Remove both the unicode character and the format
           const result = replace(removeFormat(value, name), new RegExp(activeAttributes.unicode), '')
           onChange( result  )
+          */
         } else {
           this.addIcon()
         }
@@ -67,29 +68,32 @@ import FontAwesomeIconChooser from './chooser'
         this.setState({ addingIcon: false })
       }
 
-      handleSelect({ prefix, icon, unicode }){
+      handleSelect(iconDefinition){
         const { value, onChange } = this.props
 
         const formatToInsert = {
           type: name,
           attributes: {
-            class: `${ prefix }`,
-            icon: icon,
-            unicode,
-            prefix
+            json: JSON.stringify(iconDefinition)
           }
         }
 
-        const valueToInsert = {
-          text: `${ unicode }`,
-          formats: [ [ formatToInsert ] ],
-        }
-
-        onChange( insert( value, valueToInsert, value.start, value.end ) )
+        onChange( insertObject( value, formatToInsert ) )
       }
 
       render() {
-        const { isActive } = this.props
+        const { isActive, value } = this.props
+
+        // TODO: figure out whether I want to do anything about this state where, when
+        // the icon is clicked isObjectActive is true and activeObjectAttributes contains it's attributes.
+        // console.log(`DEBUG render: isActive: ${isActive}, isObjectActive: ${isObjectActive} for value: `, value)
+
+        const currentFormat = value.replacements[value.start]
+        const isFaIconActive = currentFormat && currentFormat.type === name
+
+        if(isFaIconActive) {
+          console.log("DEBUG: fa-icon activated with format: ", currentFormat )
+        }
 
         return (
           <Fragment>

@@ -1,8 +1,11 @@
 module.exports = {
-	entry: './font-awesome/index.js',
+  entry: {
+    block: './font-awesome/index.js',
+    component: './fa-icon/index.js'
+  },
 	output: {
 		path: __dirname,
-		filename: './font-awesome/block.build.js',
+		filename: './[name].build.js',
   },
 	module: {
     rules: [
