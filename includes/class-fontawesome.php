@@ -240,13 +240,14 @@ class FontAwesome {
 	 * @internal
 	 */
 	const DEFAULT_USER_OPTIONS = array(
-		'usePro'         => false,
-		'v4Compat'       => true,
-		'technology'     => 'webfont',
-		'pseudoElements' => true,
-		'kitToken'       => null,
+		'usePro'             => false,
+		'v4Compat'           => true,
+		'technology'         => 'webfont',
+		'pseudoElements'     => true,
+		'kitToken'           => null,
+		'blockEditorEnabled' => true,
 		// whether the token is present, not the token's value.
-		'apiToken'       => false,
+		'apiToken'           => false,
 	);
 
 	/**
@@ -443,18 +444,49 @@ class FontAwesome {
 	public function try_upgrade() {
 		$options = get_option( self::OPTIONS_KEY );
 
+		$should_upgrade = false;
+
+		$upgraded_options = array();
+
 		// Upgrade from v1 schema: 4.0.0-rc13 or earlier.
 		if ( isset( $options['lockedLoadSpec'] ) || isset( $options['adminClientLoadSpec'] ) ) {
 			if ( isset( $options['removeUnregisteredClients'] ) && $options['removeUnregisteredClients'] ) {
 				$this->_old_remove_unregistered_clients = true;
 			}
 
-			$upgraded_options = $this->convert_options_from_v1( $options );
+			$upgraded_options = array_merge( $upgraded_options, $this->convert_options_from_v1( $options ) );
 
 			// Delete the old release metadata transient to ensure we refresh it here.
 			delete_transient( FontAwesome_Release_Provider::RELEASES_TRANSIENT );
 
 			$this->refresh_releases();
+
+			/**
+			 * If the version is still not set for some reason, set it to a
+			 * default of the latest available version.
+			 */
+			if ( ! isset( $upgraded_options['version'] ) ) {
+				$upgraded_options['version'] = fa()->latest_version();
+			}
+
+			$should_upgrade = true;
+		}
+
+		// Upgrade from v2 schema: 4.0.0-rc20 or earlier.
+		if( ! isset( $options['blockEditorEnabled'] ) ) {
+			if ( ! $should_upgrade ) {
+				/**
+				 * Initialize $upgraded_options (so far) as the current $options
+				 * if we haven't already initialized it.
+				 */
+				$upgraded_options = $options;
+			}
+			$upgraded_options['blockEditorEnabled'] = self::DEFAULT_USER_OPTIONS['blockEditorEnabled'];
+			$should_upgrade = true;
+		}
+
+		if( $should_upgrade ) {
+			$this->validate_options( $upgraded_options );
 
 			/**
 			 * Delete the main option to make sure it's removed entirely, including
@@ -468,17 +500,6 @@ class FontAwesome {
 			if ( ! delete_option( self::OPTIONS_KEY ) ) {
 				throw UpgradeException::main_option_delete();
 			}
-
-			/**
-			 * If the version is still not set for some reason, set it to a
-			 * default of the latest available version.
-			 */
-			if ( ! isset( $upgraded_options['version'] ) ) {
-				$upgraded_options['version'] = fa()->latest_version();
-			}
-
-			// Final check: validate it.
-			$this->validate_options( $upgraded_options );
 
 			update_option( self::OPTIONS_KEY, $upgraded_options );
 		}
@@ -516,6 +537,12 @@ class FontAwesome {
 		$options = $this->options();
 		$this->validate_options( $options );
 		return $this->using_kit_given_options( $options );
+	}
+
+	public function block_editor_enabled() {
+		$options = $this->options();
+		$this->validate_options( $options );
+		return $options['blockEditorEnabled'];
 	}
 
 	/**
@@ -936,6 +963,10 @@ class FontAwesome {
 			! is_string( $options['technology'] ) ||
 			false === array_search( $options['technology'], [ 'svg', 'webfont' ], true )
 		) {
+			throw new ConfigCorruptionException();
+		}
+
+		if ( ! isset( $options['blockEditorEnabled'] ) || ! is_bool( $options['blockEditorEnabled'] ) ) {
 			throw new ConfigCorruptionException();
 		}
 	}

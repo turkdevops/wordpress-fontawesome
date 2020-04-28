@@ -57,6 +57,7 @@ class OptionsTest extends \WP_UnitTestCase {
 				'usePro' => true,
 				'v4Compat' => true,
 				'kitToken' => null,
+				'blockEditorEnabled' => true,
 				'apiToken' => false
 			),
 			fa()->convert_options_from_v1(
@@ -127,7 +128,8 @@ class OptionsTest extends \WP_UnitTestCase {
 				'usePro' => true,
 				'v4Compat' => true,
 				'kitToken' => null,
-				'apiToken' => false
+				'apiToken' => false,
+				'blockEditorEnabled' => true
 			),
 			fa()->options()
 		);
@@ -157,7 +159,8 @@ class OptionsTest extends \WP_UnitTestCase {
 				'usePro' => true,
 				'v4Compat' => true,
 				'kitToken' => null,
-				'apiToken' => false
+				'apiToken' => false,
+				'blockEditorEnabled' => true
 			),
 			fa()->options()
 		);
@@ -172,7 +175,8 @@ class OptionsTest extends \WP_UnitTestCase {
 				'usePro' => true,
 				'v4Compat' => true,
 				'kitToken' => null,
-				'apiToken' => false
+				'apiToken' => false,
+				'blockEditorEnabled' => true
 			),
 			fa()->convert_options_from_v1(
 				array (
@@ -212,7 +216,8 @@ class OptionsTest extends \WP_UnitTestCase {
 				'usePro' => true,
 				'v4Compat' => true,
 				'kitToken' => null,
-				'apiToken' => false
+				'apiToken' => false,
+				'blockEditorEnabled' => true
 			),
 			fa()->convert_options_from_v1(
 				array (
