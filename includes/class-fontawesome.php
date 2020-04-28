@@ -387,16 +387,107 @@ class FontAwesome {
 				 */
 			}
 
-			// TODO: replace this experimental enqueue with something real.
+			if ( $this->block_editor_enabled() ) {
+				/**
+				 * The fa-icon web component needs to always be loaded, whether
+				 * front end or back end.
+				 */
+				$web_component_enqueue_command = new FontAwesome_Command(
+					function () {
+						// phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+						wp_enqueue_script(
+							'font-awesome-fa-icon-component',
+							trailingslashit( FONTAWESOME_DIR_URL ) . 'blocks/component.build.js',
+							[],
+							self::PLUGIN_VERSION
+						);
+					}
+				);
 
-			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters
-			wp_enqueue_script(
-				'font-awesome-fa-icon-component',
-				trailingslashit( FONTAWESOME_DIR_URL ) . 'blocks/component.build.js',
-				[],
-				null,
-				true
-			);
+				foreach ( [ 'wp_enqueue_scripts', 'admin_enqueue_scripts', 'login_enqueue_scripts' ] as $action ) {
+					add_action(
+						$action,
+						[ $web_component_enqueue_command, 'run' ]
+					);
+				}
+
+				/**
+				 * The all.js asset only needs to be loaded (in addition to whatever else
+				 * might be loaded) when we're actually using the block editor, so
+				 * the block editor code can access iconDefinitions and the
+				 * JS/SVG API.
+				 * 
+				 * But this doesn't need to be done if we're already configured to load
+				 * SVG from CDN.
+				 */
+				if( $this->using_kit() || $this->technology() !== 'svg' ) {
+					$block_editor_assets_resource_collection = $this
+						->release_provider()
+						->get_resource_collection(
+							$this->options()['version'],
+							array(
+								'use_pro'  => $this->pro(),
+								'use_svg'  => true,
+								'use_shim' => false,
+							)
+						);
+
+					$cdn_url = $block_editor_assets_resource_collection->resources()[0]->source();
+
+					$block_editor_assets_resource_handle = 'font-awesome-block-editor-svg-with-js';
+
+					$block_editor_assets_enqueue_command = new FontAwesome_Command(
+						function () use ( $cdn_url, $block_editor_assets_resource_handle ) {
+							// phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+							wp_enqueue_script(
+								$block_editor_assets_resource_handle,
+								$cdn_url,
+								[],
+								self::PLUGIN_VERSION
+							);
+						}
+					);
+
+					add_action(
+						'enqueue_block_editor_assets',
+						[ $block_editor_assets_enqueue_command, 'run' ]
+					);
+
+					/**
+					 * Since this represents an enqueue of the svg/js asset only for
+					 * use to support the block editor, we don't want it to be
+					 * auto-replacing <i> tags, and conflicting with whatever is
+					 * the primary asset.
+					 *
+					 * If that primary asset uses SVG technology,
+					 * then it should be responsible for doing the auto-replacing.
+					 *
+					 * If that primary asset uses webfont technology, then no
+					 * auto-replacing should be done at all.
+					 */
+					add_filter(
+						'script_loader_tag',
+						function ( $tag, $handle ) use ( $block_editor_assets_resource_handle ) {
+							if ( $handle === $block_editor_assets_resource_handle ) {
+								$extra_tag_attributes = 'data-auto-replace-svg="false"';
+
+								$modified_script_tag = preg_replace(
+									// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
+									'/<script\s*(.*?src=.*?)>/',
+									"<script $extra_tag_attributes " . '\1>',
+									$tag,
+									1
+								);
+								return $modified_script_tag;
+							} else {
+								return $tag;
+							}
+						},
+						10,
+						2
+					);
+				}
+			}
 
 			$this->maybe_enqueue_admin_js_bundle();
 
