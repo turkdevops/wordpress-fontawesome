@@ -43,8 +43,8 @@ function font_awesome_block_init() {
 		'__FontAwesomeOfficialPlugin_BlockEditorConfig__',
 		array(
 			'version' => fa()->version(),
-			'usingPro' => fa()->pro() ? 'true' : 'false',
-			'usingKit' => fa()->using_kit() ? 'true' : 'false',
+			'usingPro' => fa()->pro() ? true : false,
+			'usingKit' => fa()->using_kit() ? true : false,
 			'technology' => fa()->technology()
 		)
 	);
