@@ -7,6 +7,9 @@ module.exports = {
 		path: __dirname,
 		filename: './[name].build.js',
   },
+  externals: {
+    react: 'React'
+  },
 	module: {
     rules: [
       {
