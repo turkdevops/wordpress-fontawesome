@@ -1,4 +1,6 @@
 <?php
+namespace FortAwesome;
+
 /**
  * Functions to register client-side assets (scripts and stylesheets) for the
  * Gutenberg block.
@@ -33,6 +35,20 @@ function font_awesome_block_init() {
 		filemtime( "$dir/$index_js" )
 	);
 
+	/**
+	 * The block editing code needs to know some of the configuration data.
+	 */
+	wp_localize_script(
+		'font-awesome-block-editor',
+		'__FontAwesomeOfficialPlugin_BlockEditorConfig__',
+		array(
+			'version' => fa()->version(),
+			'usingPro' => fa()->pro() ? 'true' : 'false',
+			'usingKit' => fa()->using_kit() ? 'true' : 'false',
+			'technology' => fa()->technology()
+		)
+	);
+
 	$editor_css = 'font-awesome/editor.css';
 	wp_register_style(
 		'font-awesome-block-editor',
@@ -55,4 +71,5 @@ function font_awesome_block_init() {
 		'style'         => 'font-awesome-block',
 	) );
 }
-add_action( 'wp_loaded', 'font_awesome_block_init' );
+
+add_action( 'wp_loaded', 'FortAwesome\font_awesome_block_init' );
