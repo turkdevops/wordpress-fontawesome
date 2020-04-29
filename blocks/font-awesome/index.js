@@ -78,6 +78,8 @@ import FontAwesomeIconChooser from './chooser'
           }
         }
 
+        this.stopAddingIcon()
+
         onChange( insertObject( value, formatToInsert ) )
       }
 
